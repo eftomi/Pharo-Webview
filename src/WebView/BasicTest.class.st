@@ -13,8 +13,7 @@ BasicTest >> testCallback [
 	| cb1 cb2 html wv |
 	cb1 := MyCallback1 uniqueInstance 
 		initializeWithBlock: [ :req | 
-			Transcript crShow: req.
-			'Here is the message' ] 
+			Transcript crShow: req ] 
 		nameInJS: 'firstFunc'.
 	cb2 := MyCallback2 uniqueInstance 
 		initializeWithBlock: [ :req | 
@@ -25,10 +24,10 @@ BasicTest >> testCallback [
 	<!doctype html>
 	<html>
 		<head>
-			<title>Krnek</title>
+			<title>Test</title>
 		</head>
 		<body>
-			<p>krnek</p>
+			<p>This is some test</p>
 			<button id="btn" onclick="
 				firstFunc({''seq'': 1}, {''load'': ''Hello from firstFunc!''});
 				secondFunc({''seq'': 1}, {''load'': ''Hello from secondFunc!''});
@@ -48,20 +47,19 @@ BasicTest >> testCallback2 [
 	| cb3 html wv |
 	cb3 := MyCallback3 uniqueInstance 
 		initializeWithBlock: [ :req | 
-			Transcript crShow: req.
-			'{}' ] 
+			Transcript crShow: req ] 
 		nameInJS: 'myFunc'.
 	
 	html := 'data:text/html, 
 	<!doctype html>
 	<html>
 		<head>
-			<title>Krnek</title>
+			<title>Test</title>
 		</head>
 		<body>
-			<p>krnek</p>
+			<p>This is some test</p>
 			<button id="btn" onclick="
-				myFunc(3.14).then(function(rc) {console.log(rc)});
+				myFunc(3.14);
 				">Doit</button>
 		</body>
 	</html>'.
