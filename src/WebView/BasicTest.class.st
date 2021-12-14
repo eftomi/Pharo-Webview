@@ -1,10 +1,6 @@
 Class {
 	#name : #BasicTest,
 	#superclass : #TestCase,
-	#instVars : [
-		'library',
-		'webview'
-	],
 	#category : #'WebView-Tests'
 }
 
@@ -47,7 +43,7 @@ BasicTest >> testCallback2 [
 	| cb3 html wv |
 	cb3 := MyCallback3 uniqueInstance 
 		initializeWithBlock: [ :req | 
-			Transcript crShow: req ] 
+			((NeoJSONReader fromString: '[3.14]') at: 1) inspect ] 
 		nameInJS: 'myFunc'.
 	
 	html := 'data:text/html, 
@@ -57,7 +53,7 @@ BasicTest >> testCallback2 [
 			<title>Test</title>
 		</head>
 		<body>
-			<p>This is some test</p>
+			<p>This should run the inspector on 3.14</p>
 			<button id="btn" onclick="
 				myFunc(3.14);
 				">Doit</button>

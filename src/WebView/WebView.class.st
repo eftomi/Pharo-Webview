@@ -1,3 +1,26 @@
+"
+I represent a multiplatform WebView window which displays and runs html, css, and js content, just like a web browser, however without any other typical browser elements (back button, tabs etc.) I'm being controlled by the operating system directly, Pharo controls me indirectly.
+
+I'm standalone. If you wish to expose a block of code in Pharo to be accessible from javascript code in webview as a function (like for instance onclick=""callPharo(args)""), subclass WebViewCallback, make a uniqueInstance and set the block and its name in js (see comment in WebViewCallback).
+
+Public API and Key Messages
+
+- open - ""WebView new open"" opens a new window; create new WebView for each of the windows/browsers that you need to be displayed  
+- close - closes the window (DUE TO A BUG IN DLL THIS DOESN'T WORK IN WINDOWS AND LINUX; https://github.com/webview/webview/issues/588) 
+- setTitleTo: aString - sets window title
+- showContent: aString - if aString is valid URL I display its content. aString could also be a html or other document; in this case use proper content types at the beginning, for html this is for instance 'data:text/html, <!doctype html><html><head>...'
+- width: height: hints: - sets the dimensions and my window type; see the method body for hints constants
+- evalJS: and injectJS: - see the methods' body for description
+- registerCallback: registers a WebViewCallback subclass
+
+For convenience, the above methods (setTitleTo: and others) open the window if the method open was not executed beforehand. So you can do just:
+
+wv := WebView new showContent: 'https://pharo.org/'.
+
+I'm actually implemented by a DLL library (https://github.com/webview/webview). Besides this DLL, I also need webview implementation for the specific platform. Please look at the above GitHub address for specifics about deployment & installation on end user machine.
+
+(I'm actually a FFIOpaqueObject, hiding the FFI calls to webview.dll)
+"
 Class {
 	#name : #WebView,
 	#superclass : #FFIOpaqueObject,

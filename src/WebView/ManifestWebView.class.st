@@ -18,6 +18,11 @@ ManifestWebView class >> ruleLiteralArrayContainsCommaRuleV1FalsePositive [
 ]
 
 { #category : #'code-critics' }
+ManifestWebView class >> ruleReTestClassNotInPackageWithTestEndingNameRuleV1FalsePositive [
+	^ #(#(#(#RGClassDefinition #(#BasicTest)) #'2021-12-14T20:24:11.964855+01:00') )
+]
+
+{ #category : #'code-critics' }
 ManifestWebView class >> ruleReVariableAssignedLiteralRuleV1FalsePositive [
 	^ #(#(#(#RGClassDefinition #(#WebView)) #'2021-12-12T18:53:30.481196+01:00') )
 ]

@@ -1,3 +1,33 @@
+"
+I'm a webview callback, I represent a Pharo code block exposed to be called as a javascript function from corresponding WebView. A block of code gets one argument (like [ :arg | ]) which is a JSON array with input arguments which are coming from javascript call. I cannot return any value from the block - use other ways to send data to WebView, like its methods evalJS: and injectJS:, setting new content with showContent:, or expose Web API from Pharo.
+
+I'm useless without corresponding WebView. When you create me like this:
+
+WebViewCallback subclass: #MyCallback1
+	instanceVariableNames: ''
+	classVariableNames: ''
+	package: 'SomePackage'
+	
+cb := MyCallback uniqueInstance 
+   initializeWithBlock: [ :arg | Transcript crShow: arg ] 
+   nameInJS: 'myFunc'.
+
+you have to register me with a WebView:
+
+wv := WebView new open 
+	registerCallback: cb; 
+
+So, you have to subclass me, then create a uniqueInstance of my new subclass, and set the block and the JS name with initializeWithBlock: nameInJS:.
+
+Public API and Key Messages
+
+- initializeWithBlock: aBlock nameInJS: aString - a method to set the block of code and the name under which I will be visible from javascript as a function
+- ffiCallback - returns the actual FFICallback object that I create behind the scenes 
+- nameInJS - returns my name (alias) in javascript
+
+For an example, please see BasicTest>>testCallback in WebView-Tests package.
+
+"
 Class {
 	#name : #WebViewCallback,
 	#superclass : #Object,
@@ -34,7 +64,7 @@ WebViewCallback class >> uniqueInstance [
 	^ uniqueInstance
 ]
 
-{ #category : #accessing }
+{ #category : #private }
 WebViewCallback >> arguments [
 	^ ExternalAddress new.
 ]
