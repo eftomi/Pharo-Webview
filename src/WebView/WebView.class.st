@@ -6,7 +6,7 @@ I'm standalone. If you wish to expose a block of code in Pharo to be accessible 
 Public API and Key Messages
 
 - open - ""WebView new open"" opens a new window; create new WebView for each of the windows/browsers that you need to be displayed  
-- close - closes the window (DUE TO A BUG IN DLL THIS DOESN'T WORK IN WINDOWS AND LINUX; https://github.com/webview/webview/issues/588) 
+- close - closes the window 
 - setTitleTo: aString - sets window title
 - showContent: aString - if aString is valid URL I display its content. aString could also be a html or other document; in this case use proper content types at the beginning, for html this is for instance 'data:text/html, <!doctype html><html><head>...'
 - width: height: hints: - sets the dimensions and my window type; see the method body for hints constants
@@ -44,7 +44,14 @@ WebView class >> initialize [
 { #category : #'instance creation' }
 WebView >> close [
 	self isNull 
-		ifFalse: [ self ffiDestroy ]
+		ifFalse: [ self destroy ]
+]
+
+{ #category : #'instance creation' }
+WebView >> destroy [
+	Smalltalk os isWindows
+		ifTrue: [ ^ self ffiDestroyWindow: self ffiGetWindow ] "hack, ffiDestroy doesn't work on Windows and Linux"
+		ifFalse: [ ^ self ffiDestroy ].
 ]
 
 { #category : #'instance creation' }
@@ -77,6 +84,11 @@ WebView >> ffiCreate [
 { #category : #'ffi-calls' }
 WebView >> ffiDestroy [
 	^ self ffiCall: #( void webview_destroy(WebView *self) )
+]
+
+{ #category : #'as yet unclassified' }
+WebView >> ffiDestroyWindow: hWnd [
+	^self ffiCall: #(int DestroyWindow(ExternalAddress hWnd))  library: WinUser32.
 ]
 
 { #category : #'ffi-calls' }
