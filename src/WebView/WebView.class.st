@@ -30,16 +30,8 @@ Class {
 		'WEBVIEW_HINT_MIN',
 		'WEBVIEW_HINT_NONE'
 	],
-	#classInstVars : [
-		'webviews'
-	],
 	#category : #'WebView-Core'
 }
-
-{ #category : #initialization }
-WebView class >> initialize [
-	webviews := OrderedCollection new.
-]
 
 { #category : #'instance creation' }
 WebView >> close [
@@ -58,7 +50,7 @@ WebView >> destroy [
 WebView >> ensureOpen [
 	self isNull 
 		ifTrue: [ ^ self ffiCreate ]
-		ifFalse: [ ^ self ]
+		ifFalse: [ ^ self ] 
 ]
 
 { #category : #window }
@@ -167,7 +159,7 @@ WebView >> injectJS: aString [
 WebView >> open [
 	self isNull 
 		ifTrue: [ ^ self ffiCreate ]
-		ifFalse: [ ^ self ]
+		ifFalse: [ ^ self ] 
 ]
 
 { #category : #registering }
