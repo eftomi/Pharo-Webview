@@ -18,10 +18,10 @@ Metacello new
 
 Public API and Key Messages:
 - `open` - `WebView new open` opens a new window; create new WebView for each of the windows/browsers that you need to be displayed  
-- `close` - closes the window 
+- `close` - closes the native window 
 - `setTitleTo: aString` - sets window title
 - `showContent: aString` - if aString is valid URL webview renders its content. aString could also be a html or other document; in this case use proper content types at the beginning, for html this is for instance `'data:text/html, <!doctype html><html><head>...'`
-- `width: height: hints:` - sets the dimensions and my window type; see the method body for hints constants
+- `width: height: hints:` - sets the dimensions and native window type; see the method body for hints constants
 - `evalJS:` and `injectJS:` - see the methods' body for description
 - `registerCallback:` registers a WebViewCallback subclass
 
