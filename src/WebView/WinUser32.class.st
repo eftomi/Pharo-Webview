@@ -1,7 +1,7 @@
 Class {
 	#name : #WinUser32,
 	#superclass : #FFILibrary,
-	#category : #'WebView-Core'
+	#category : #'WebView-Libraries'
 }
 
 { #category : #'accessing - platform' }
