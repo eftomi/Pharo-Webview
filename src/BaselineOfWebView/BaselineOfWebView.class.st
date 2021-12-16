@@ -17,10 +17,10 @@ BaselineOfWebView >> baseline: spec [
 				"Packages"
 				spec
 					package: 'WebView';
-					package: 'WebView-Core'  with: [ spec requires: #('WebView-Libraries') ];
-					package: 'WebView-Libraries';
-					package: 'WebView-Manifest'  with: [ spec requires: #('WebView-Core') ];
-					package: 'WebView-Tests'  with: [ spec requires: #('WebView-Core' 'NeoJSON') ].
+					package: 'WebView-Core'  with: [ spec requires: #('WebView' 'WebView-Libraries') ];
+					package: 'WebView-Libraries' with: [ spec requires: #('WebView') ];
+					package: 'WebView-Manifest'  with: [ spec requires: #('WebView' 'WebView-Core') ];
+					package: 'WebView-Tests'  with: [ spec requires: #('WebView' 'WebView-Core' 'NeoJSON') ].
 				
 				"Groups"
 				spec
