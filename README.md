@@ -33,4 +33,4 @@ wv := WebView new showContent: 'https://pharo.org/'.
 
 Besides the DLL mentioned above, this package also needs webview implementation for the specific platform. Please look at the above GitHub address for specifics about deployment & installation on end user machine. For MS Windows, place 32 or 64 bit versions of webview.dll and WebView2Loader.dll from https://github.com/webview/webview/tree/master/dll/ into the Pharo VM folder.
 
-If you wish to expose a block of code in Pharo to be accessible from javascript code in webview as a function (like for instance `onclick="callPharo(args)"`), subclass WebViewCallback, make a uniqueInstance and set the block and its name in js (see comment in WebViewCallback class).
+If you wish to expose a block of code in Pharo to be accessible from JavaScript code in webview as a function (like for instance `onclick="callPharo(args)"`), subclass WebViewCallback, make a uniqueInstance and set the block and its name in js (see comment in WebViewCallback class).
