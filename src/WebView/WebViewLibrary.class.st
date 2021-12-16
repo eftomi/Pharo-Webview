@@ -4,7 +4,7 @@ I'm a FFILibrary which should point to webview.dll stored locally as other uFFI 
 Class {
 	#name : #WebViewLibrary,
 	#superclass : #FFILibrary,
-	#category : #'WebView-Libs'
+	#category : #'WebView-Core'
 }
 
 { #category : #'accessing - platform' }
