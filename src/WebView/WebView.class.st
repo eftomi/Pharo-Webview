@@ -49,7 +49,7 @@ WebView >> destroy [
 { #category : #'instance creation' }
 WebView >> ensureOpen [
 	self isNull 
-		ifTrue: [ ^ self ffiCreate ]
+		ifTrue: [ ^ Error new signal: 'Open WebVew first, e.g. WebView new open' ]
 		ifFalse: [ ^ self ] 
 ]
 
