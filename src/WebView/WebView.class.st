@@ -13,10 +13,6 @@ Public API and Key Messages
 - evalJS: and injectJS: - see the methods' body for description
 - registerCallback: registers a WebViewCallback subclass
 
-For convenience, the above methods (setTitleTo: and others) open the window if the method open was not executed beforehand. So you can do just:
-
-wv := WebView new showContent: 'https://pharo.org/'.
-
 I'm actually implemented by a DLL library (https://github.com/webview/webview). Besides this DLL, I also need webview implementation for the specific platform. Please look at the above GitHub address for specifics about deployment & installation on end user machine.
 
 (I'm actually a FFIOpaqueObject, hiding the FFI calls to webview.dll)
