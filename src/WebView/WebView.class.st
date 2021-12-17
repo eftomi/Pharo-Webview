@@ -78,7 +78,7 @@ WebView >> ffiDestroy [
 	^ self ffiCall: #( void webview_destroy(WebView *self) )
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'ffi-calls' }
 WebView >> ffiDestroyWindow: hWnd [
 	^self ffiCall: #(int DestroyWindow(ExternalAddress hWnd))  library: WinUser32.
 ]
