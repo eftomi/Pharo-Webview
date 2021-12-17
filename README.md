@@ -9,7 +9,7 @@ You can load WebView package using Metacello:
 
 ```
 Metacello new
-  repository: 'github://eftomi/Pharo-WebView/svc';
+  repository: 'github://eftomi/Pharo-WebView/src';
   baseline: 'WebView';
   load.
 ```
