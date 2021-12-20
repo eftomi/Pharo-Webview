@@ -8,6 +8,16 @@ Class {
 }
 
 { #category : #'accessing - platform' }
+WebViewLibrary >> macModuleName [
+	^'libwebview.dylib'
+]
+
+{ #category : #'accessing - platform' }
+WebViewLibrary >> unixModuleName [
+	^'libwebview.so.1'
+]
+
+{ #category : #'accessing - platform' }
 WebViewLibrary >> win32ModuleName [
 	^ 'webview.dll'
 ]
