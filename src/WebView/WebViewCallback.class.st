@@ -42,6 +42,11 @@ Class {
 }
 
 { #category : #accessing }
+WebViewCallback class >> calloutAPIClass [
+	^ TFCalloutAPI
+]
+
+{ #category : #accessing }
 WebViewCallback class >> ffiCallback [
 
 	^ ffiCallback

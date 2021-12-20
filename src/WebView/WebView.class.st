@@ -96,8 +96,8 @@ WebView >> ffiInit: aString [
 
 { #category : #accessing }
 WebView >> ffiLibrary [
-	Smalltalk os isWindows ifTrue: [ ^ WebViewLibrary uniqueInstance ].
-	^ WebViewLibraryUsingWorker uniqueInstance.
+	Smalltalk os isWindows ifTrue: [ ^ WebViewLibrary ].
+	^ WebViewLibraryUsingWorker.
 ]
 
 { #category : #'ffi-calls' }
