@@ -9,7 +9,7 @@ Class {
 
 { #category : #'code-critics' }
 ManifestWebView class >> ruleCodeCruftLeftInMethodsRuleV1FalsePositive [
-	^ #(#(#(#RGMethodDefinition #(#WebViewCallback #initialize #false)) #'2021-12-12T12:14:53.773822+01:00') #(#(#RGMethodDefinition #(#WebViewCallback #initializeWithBlock: #false)) #'2021-12-12T12:24:39.843269+01:00') #(#(#RGMethodDefinition #(#BasicTest #testCallback #false)) #'2021-12-12T18:08:37.843028+01:00') #(#(#RGMethodDefinition #(#BasicTest #testCallback #false)) #'2021-12-12T18:29:02.867321+01:00') #(#(#RGMethodDefinition #(#BasicTest #testEvalJSWithCallback #false)) #'2021-12-19T17:13:45.657088+01:00') #(#(#RGMethodDefinition #(#BasicTest #testTwoCallbacks #false)) #'2021-12-19T17:16:55.763077+01:00') )
+	^ #(#(#(#RGMethodDefinition #(#WebViewCallback #initialize #false)) #'2021-12-12T12:14:53.773822+01:00') #(#(#RGMethodDefinition #(#WebViewCallback #initializeWithBlock: #false)) #'2021-12-12T12:24:39.843269+01:00') #(#(#RGMethodDefinition #(#BasicTest #testCallback #false)) #'2021-12-12T18:08:37.843028+01:00') #(#(#RGMethodDefinition #(#BasicTest #testCallback #false)) #'2021-12-12T18:29:02.867321+01:00') #(#(#RGMethodDefinition #(#BasicTest #testEvalJSWithCallback #false)) #'2021-12-19T17:13:45.657088+01:00') #(#(#RGMethodDefinition #(#BasicTest #testTwoCallbacks #false)) #'2021-12-19T17:16:55.763077+01:00') #(#(#RGMethodDefinition #(#BasicTest #testEvalJSWithCallback #false)) #'2021-12-20T18:37:44.804+01:00') #(#(#RGMethodDefinition #(#BasicTest #testEvalJSWithCallback #false)) #'2021-12-20T18:37:48.534+01:00') #(#(#RGClassDefinition #(#BasicTest)) #'2021-12-20T18:38:07.62+01:00') )
 ]
 
 { #category : #'code-critics' }

@@ -47,7 +47,7 @@ BasicTest >> testEvalJSWithCallback [
 			<title>Test</title>
 		</head>
 		<body>
-			<p>This is some test with js evaluaton. We issue a callback, it should be visible in Transcript.</p>
+			<p>This is some test with js evaluaton. We issue a callback, it should be visible in  			Transcript in two seconds</p>
 		</body>
 	</html>'.
 
@@ -55,7 +55,7 @@ BasicTest >> testEvalJSWithCallback [
 		registerCallback: cb1.
 	
 	wv showContent: html.
-	3 seconds wait.
+	2 seconds wait.
 	wv evalJS: 'firstFunc(''Hey, do you see me?'')'.
 
 ]

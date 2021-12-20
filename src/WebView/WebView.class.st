@@ -37,8 +37,8 @@ WebView >> close [
 
 { #category : #'instance creation' }
 WebView >> destroy [
-	Smalltalk os isWindows
-		ifTrue: [ ^ self ffiDestroyWindow: self ffiGetWindow ] "hack, ffiDestroy doesn't work on Windows and Linux"
+	Smalltalk os isWindows "hack, ffiDestroy doesn't work on Windows and Linux"
+		ifTrue: [ ^ self ffiDestroyWindow: (self ffiGetWindow pinInMemory) ] 
 		ifFalse: [ ^ self ffiDestroy ].
 ]
 
@@ -96,7 +96,8 @@ WebView >> ffiInit: aString [
 
 { #category : #accessing }
 WebView >> ffiLibrary [
-	^ WebViewLibrary
+	Smalltalk os isWindows ifTrue: [ ^ WebViewLibrary uniqueInstance ].
+	^ WebViewLibraryUsingWorker uniqueInstance.
 ]
 
 { #category : #'ffi-calls' }
