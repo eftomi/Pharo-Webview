@@ -2,7 +2,7 @@
 
 Pharo-WebView is a package which implements a binding to webview dll library available at https://github.com/webview/webview in Pharo. Webview allows you to show HTML user interfaces in a native window, inject JavaScript code and HTML content into the page. It can render HTML originating via web requests or as a direct input.
 
-IMPORTANT: Pharo-WebView was until now tested only on Windows 64-bit. Other platforms (Mac, Linux) should follow.
+IMPORTANT: Pharo-WebView was until now tested only on Windows 64-bit. Other platforms (Mac, Linux) should follow. API could change.
 
 ## Installation
 You can load WebView package using Metacello:
