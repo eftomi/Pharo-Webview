@@ -26,7 +26,7 @@ WebViewLibraryUsingWorker >> macModuleName [
 
 { #category : #accessing }
 WebViewLibraryUsingWorker >> runner [
-	^ TFWorker default
+	^ TFWorker default.
 ]
 
 { #category : #'accessing - platform' }

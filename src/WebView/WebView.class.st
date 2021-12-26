@@ -20,6 +20,9 @@ I'm actually implemented by a DLL library (https://github.com/webview/webview). 
 Class {
 	#name : #WebView,
 	#superclass : #FFIOpaqueObject,
+	#instVars : [
+		'webViewCallback'
+	],
 	#classVars : [
 		'WEBVIEW_HINT_FIXED',
 		'WEBVIEW_HINT_MAX',
@@ -28,6 +31,13 @@ Class {
 	],
 	#category : #'WebView-Core'
 }
+
+{ #category : #'instance creation' }
+WebView class >> new [
+	^ self
+		basicNew
+		ffiCreate
+]
 
 { #category : #'instance creation' }
 WebView >> close [
@@ -42,19 +52,11 @@ WebView >> destroy [
 		ifFalse: [ ^ self ffiDestroy ].
 ]
 
-{ #category : #'instance creation' }
-WebView >> ensureOpen [
-	self isNull 
-		ifTrue: [ ^ Error new signal: 'Open WebVew first, e.g. WebView new open' ]
-		ifFalse: [ ^ self ] 
-]
-
 { #category : #window }
 WebView >> evalJS: aString [
 "// Evaluates arbitrary JavaScript code. Evaluation happens asynchronously, also
 // the result of the expression is ignored. Use RPC bindings if you want to
 // receive notifications about the results of the evaluation."
-	self ensureOpen.
 	self ffiEval: aString.
 ]
 
@@ -96,8 +98,8 @@ WebView >> ffiInit: aString [
 
 { #category : #accessing }
 WebView >> ffiLibrary [
-	Smalltalk os isWindows ifTrue: [ ^ WebViewLibrary ].
-	^ WebViewLibraryUsingWorker.
+	Smalltalk os isWindows ifTrue: [ ^ WebViewLibrary uniqueInstance ].
+	^ WebViewLibraryUsingWorker uniqueInstance.
 ]
 
 { #category : #'ffi-calls' }
@@ -148,12 +150,12 @@ WebView >> injectJS: aString [
 "// Injects JavaScript code at the initialization of the new page. Every time
 // the webview will open a the new page - this initialization code will be
 // executed. It is guaranteed that code is executed before window.onload."
-	self ensureOpen.
 	self ffiInit: aString.
 ]
 
 { #category : #'instance creation' }
 WebView >> open [
+"THIS IS OBSOLETE, USE WebView new"
 	self isNull 
 		ifTrue: [ ^ self ffiCreate ]
 		ifFalse: [ ^ self ] 
@@ -166,16 +168,30 @@ WebView >> registerCallback: aWebViewCallback [
 // receives a request string and a user-provided argument pointer. Request
 // string is a JSON array of all the arguments passed to the JavaScript
 // function."
-	self ensureOpen.
 	^ self ffiCallback: aWebViewCallback ffiCallback
 	  name: aWebViewCallback nameInJS
 	  arguments: aWebViewCallback arguments.
 ]
 
+{ #category : #registering }
+WebView >> registerCallbackBlock: aBlock signature: aSignature nameInJS: aString [
+"// Binds a native C callback so that it will appear under the given name as a
+// global JavaScript function. Internally it uses webview_init(). Callback
+// receives a request string and a user-provided argument pointer. Request
+// string is a JSON array of all the arguments passed to the JavaScript
+// function."
+	webViewCallback := self 
+		newCallbackWithSignature: aSignature 
+		block: aBlock.
+
+	^ self ffiCallback: webViewCallback
+	  name: aString
+	  arguments: ExternalAddress new.
+]
+
 { #category : #window }
 WebView >> setTitleTo: aString [
 "// Updates the title of the native window."
-	self ensureOpen.
 	self ffiTitle: aString
 ]
 
@@ -184,7 +200,6 @@ WebView >> showContent: aString [
 "// Navigates webview to the given URL. URL may be a data URI, i.e.
 // ""data:text/text,<html>...</html>"". It is often ok not to url-encode it
 // properly, webview will re-encode it for you."
-	self ensureOpen.
 	self ffiNavigate: aString.
 ]
 
@@ -195,7 +210,6 @@ WEBVIEW_HINT_NONE 0  // Width and height are default size
 WEBVIEW_HINT_MIN 1   // Width and height are minimum bounds
 WEBVIEW_HINT_MAX 2   // Width and height are maximum bounds
 WEBVIEW_HINT_FIXED 3 // Window size can not be changed by a user"
-	self ensureOpen.
 	self ffiWidth: anIntegerWidth 
 		height: anIntegerHeight 
 		hits: anIntegerHints.
