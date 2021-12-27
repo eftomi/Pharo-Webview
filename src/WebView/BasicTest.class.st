@@ -62,7 +62,7 @@ BasicTest >> testEvalJSWithCallback [
 { #category : #tests }
 BasicTest >> testShowContent [
 	| wv |
-	wv := TestWebView new.
+	wv := TestWebView uniqueInstance .
 	wv showContent: 'https://www.pharo.org/'.
 	wv run.
 
