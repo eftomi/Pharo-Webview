@@ -162,31 +162,20 @@ WebView >> open [
 ]
 
 { #category : #registering }
-WebView >> registerCallback: aWebViewCallback [
-"// Binds a native C callback so that it will appear under the given name as a
-// global JavaScript function. Internally it uses webview_init(). Callback
-// receives a request string and a user-provided argument pointer. Request
-// string is a JSON array of all the arguments passed to the JavaScript
-// function."
-	^ self ffiCallback: aWebViewCallback ffiCallback
-	  name: aWebViewCallback nameInJS
-	  arguments: aWebViewCallback arguments.
-]
-
-{ #category : #registering }
-WebView >> registerCallbackBlock: aBlock signature: aSignature nameInJS: aString [
+WebView >> registerCallbackBlock: aBlock nameInJS: aString [
 "// Binds a native C callback so that it will appear under the given name as a
 // global JavaScript function. Internally it uses webview_init(). Callback
 // receives a request string and a user-provided argument pointer. Request
 // string is a JSON array of all the arguments passed to the JavaScript
 // function."
 	webViewCallback := self 
-		newCallbackWithSignature: aSignature 
-		block: aBlock.
+		newCallbackWithSignature: #(void (String seq, String req, void * arg)) 
+		block: [ :seq :req :arg | 
+				aBlock value: (NeoJSONObject fromString: req)].
 
 	^ self ffiCallback: webViewCallback
-	  name: aString
-	  arguments: ExternalAddress new.
+	  	name: aString
+	  	arguments: ExternalAddress new.
 ]
 
 { #category : #window }
