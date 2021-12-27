@@ -99,7 +99,8 @@ WebView >> ffiInit: aString [
 { #category : #accessing }
 WebView >> ffiLibrary [
 	Smalltalk os isWindows ifTrue: [ ^ WebViewLibrary uniqueInstance ].
-	^ WebViewLibraryUsingWorker uniqueInstance.
+	Smalltalk os isLinux ifTrue: [ ^ WebViewLibraryUsingMainThreadRunner uniqueInstance ].
+"	^ WebViewLibraryUsingWorker uniqueInstance."
 ]
 
 { #category : #'ffi-calls' }
@@ -151,14 +152,6 @@ WebView >> injectJS: aString [
 // the webview will open a the new page - this initialization code will be
 // executed. It is guaranteed that code is executed before window.onload."
 	self ffiInit: aString.
-]
-
-{ #category : #'instance creation' }
-WebView >> open [
-"THIS IS OBSOLETE, USE WebView new"
-	self isNull 
-		ifTrue: [ ^ self ffiCreate ]
-		ifFalse: [ ^ self ] 
 ]
 
 { #category : #registering }
