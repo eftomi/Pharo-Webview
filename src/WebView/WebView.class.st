@@ -21,8 +21,7 @@ Class {
 	#name : #WebView,
 	#superclass : #FFIOpaqueObject,
 	#instVars : [
-		'webViewCallback',
-		'gtkProc'
+		'webViewCallback'
 	],
 	#classVars : [
 		'WEBVIEW_HINT_FIXED',
@@ -30,14 +29,27 @@ Class {
 		'WEBVIEW_HINT_MIN',
 		'WEBVIEW_HINT_NONE'
 	],
+	#classInstVars : [
+		'gtkProc'
+	],
 	#category : #'WebView-Core'
 }
+
+{ #category : #initialization }
+WebView class >> getGtkProc [
+	^ gtkProc
+]
 
 { #category : #'instance creation' }
 WebView class >> new [
 	^ self
 		basicNew
 		ffiCreate
+]
+
+{ #category : #initialization }
+WebView class >> setGtkProc: aProcess [
+	gtkProc := aProcess 
 ]
 
 { #category : #'instance creation' }
@@ -179,12 +191,12 @@ WebView >> registerCallbackBlock: aBlock nameInJS: aString [
 { #category : #window }
 WebView >> run [
 	Smalltalk os isLinux ifTrue: [ 
-		gtkProc := [ [ true ] 
+		self class setGtkProc: ([ [ true ] 
 			whileTrue: [ 
 				(self ffiEventsPending = 1) ifTrue: 
 					[self ffiRunIteration]. 
 				Processor yield. ]
-			] forkAt: Processor lowestPriority named: 'WebView Gtk3 main loop'.
+			] forkAt: Processor lowestPriority named: 'WebView Gtk3 main loop')
  	]
 ]
 
@@ -204,7 +216,7 @@ WebView >> showContent: aString [
 
 { #category : #window }
 WebView >> terminate [
-	Smalltalk os isLinux ifTrue: [ gtkProc terminate ].
+	Smalltalk os isLinux ifTrue: [ self class getGtkProc terminate ].
 ]
 
 { #category : #window }
