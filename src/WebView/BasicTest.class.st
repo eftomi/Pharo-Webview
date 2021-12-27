@@ -64,7 +64,7 @@ BasicTest >> testShowContent [
 	| wv |
 	wv := WebView new.
 	wv showContent: 'https://www.pharo.org/'.
-	wv ffiRun.
+	wv run.
 
 ]
 

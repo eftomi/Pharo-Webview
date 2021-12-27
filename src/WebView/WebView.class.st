@@ -21,7 +21,8 @@ Class {
 	#name : #WebView,
 	#superclass : #FFIOpaqueObject,
 	#instVars : [
-		'webViewCallback'
+		'webViewCallback',
+		'gtkProc'
 	],
 	#classVars : [
 		'WEBVIEW_HINT_FIXED',
@@ -37,12 +38,6 @@ WebView class >> new [
 	^ self
 		basicNew
 		ffiCreate
-]
-
-{ #category : #'instance creation' }
-WebView >> close [
-	self isNull 
-		ifFalse: [ self destroy ]
 ]
 
 { #category : #'instance creation' }
@@ -87,6 +82,11 @@ WebView >> ffiEval: aString [
 ]
 
 { #category : #'ffi-calls' }
+WebView >> ffiEventsPending [ 
+	^ self ffiCall: #( int webview_events_pending(WebView *self)) 
+]
+
+{ #category : #'ffi-calls' }
 WebView >> ffiGetWindow [
 	^self ffiCall: #( void *webview_get_window(WebView *self) )
 ]
@@ -99,7 +99,7 @@ WebView >> ffiInit: aString [
 { #category : #accessing }
 WebView >> ffiLibrary [
 	Smalltalk os isWindows ifTrue: [ ^ WebViewLibrary uniqueInstance ].
-	Smalltalk os isLinux ifTrue: [ ^ WebViewLibraryUsingMainThreadRunner uniqueInstance ].
+	Smalltalk os isLinux ifTrue: [ ^ WebViewLibraryUsingWorker uniqueInstance ].
 "	^ WebViewLibraryUsingWorker uniqueInstance."
 ]
 
@@ -117,6 +117,11 @@ WebView >> ffiReturnSeq: aStringSeq status: anInteger result: aStringResult [
 { #category : #'ffi-calls' }
 WebView >> ffiRun [
 	^ self ffiCall: #( void webview_run(WebView *self) )
+]
+
+{ #category : #'ffi-calls' }
+WebView >> ffiRunIteration [ 
+	^ self ffiCall: #( void webview_run_iteration(WebView *self) )
 ]
 
 { #category : #'ffi-calls' }
@@ -172,6 +177,18 @@ WebView >> registerCallbackBlock: aBlock nameInJS: aString [
 ]
 
 { #category : #window }
+WebView >> run [
+	Smalltalk os isLinux ifTrue: [ 
+		gtkProc := [ [ true ] 
+			whileTrue: [ 
+				(self ffiEventsPending = 1) ifTrue: 
+					[self ffiRunIteration]. 
+				Processor yield. ]
+			] forkAt: Processor lowestPriority named: 'WebView Gtk3 main loop'.
+ 	]
+]
+
+{ #category : #window }
 WebView >> setTitleTo: aString [
 "// Updates the title of the native window."
 	self ffiTitle: aString
@@ -183,6 +200,11 @@ WebView >> showContent: aString [
 // ""data:text/text,<html>...</html>"". It is often ok not to url-encode it
 // properly, webview will re-encode it for you."
 	self ffiNavigate: aString.
+]
+
+{ #category : #window }
+WebView >> terminate [
+	Smalltalk os isLinux ifTrue: [ gtkProc terminate ].
 ]
 
 { #category : #window }
