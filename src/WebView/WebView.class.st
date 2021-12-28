@@ -105,6 +105,7 @@ WebView >> ffiInit: aString [
 WebView >> ffiLibrary [
 	Smalltalk os isWindows ifTrue: [ ^ WebViewLibrary uniqueInstance ].
 	Smalltalk os isLinux ifTrue: [ ^ WebViewLibraryUsingWorker uniqueInstance ].
+	Smalltalk os isMacOSX ifTrue: [ ^ WebViewLibrary uniqueInstance ].
 "	^ WebViewLibraryUsingWorker uniqueInstance."
 ]
 
