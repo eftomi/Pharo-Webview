@@ -20,29 +20,19 @@ I'm actually implemented by a DLL library (https://github.com/webview/webview). 
 Class {
 	#name : #WebView,
 	#superclass : #FFIOpaqueObject,
-	#instVars : [
-		'webViewCallback',
-		'gtkProcess'
-	],
 	#classVars : [
-		'GtkProc',
 		'WEBVIEW_HINT_FIXED',
 		'WEBVIEW_HINT_MAX',
 		'WEBVIEW_HINT_MIN',
 		'WEBVIEW_HINT_NONE'
 	],
-	#classInstVars : [
-		'uniqueInstance'
-	],
 	#category : #'WebView-Core'
 }
 
-{ #category : #accessing }
-WebView class >> uniqueInstance [ 
-	uniqueInstance 
-		ifNil: [ uniqueInstance := self new ffiCreate ]
-		ifNotNil: [ uniqueInstance handle isNull ifTrue: [ uniqueInstance := self new ffiCreate ] ].
-	^uniqueInstance
+{ #category : #'instance creation' }
+WebView >> close [
+	self isNull 
+		ifFalse: [ self destroy ]
 ]
 
 { #category : #'instance creation' }
@@ -52,11 +42,19 @@ WebView >> destroy [
 		ifFalse: [ ^ self ffiDestroy ].
 ]
 
+{ #category : #'instance creation' }
+WebView >> ensureOpen [
+	self isNull 
+		ifTrue: [ ^ Error new signal: 'Open WebVew first, e.g. WebView new open' ]
+		ifFalse: [ ^ self ] 
+]
+
 { #category : #window }
 WebView >> evalJS: aString [
 "// Evaluates arbitrary JavaScript code. Evaluation happens asynchronously, also
 // the result of the expression is ignored. Use RPC bindings if you want to
 // receive notifications about the results of the evaluation."
+	self ensureOpen.
 	self ffiEval: aString.
 ]
 
@@ -87,11 +85,6 @@ WebView >> ffiEval: aString [
 ]
 
 { #category : #'ffi-calls' }
-WebView >> ffiEventsPending [ 
-	^ self ffiCall: #( int webview_events_pending(WebView *self)) 
-]
-
-{ #category : #'ffi-calls' }
 WebView >> ffiGetWindow [
 	^self ffiCall: #( void *webview_get_window(WebView *self) )
 ]
@@ -103,9 +96,8 @@ WebView >> ffiInit: aString [
 
 { #category : #accessing }
 WebView >> ffiLibrary [
-	Smalltalk os isWindows ifTrue: [ ^ WebViewLibrary uniqueInstance ].
-	Smalltalk os isLinux ifTrue: [ ^ WebViewLibraryUsingWorker uniqueInstance ].
-"	^ WebViewLibraryUsingWorker uniqueInstance."
+	Smalltalk os isWindows ifTrue: [ ^ WebViewLibrary ].
+	^ WebViewLibraryUsingWorker.
 ]
 
 { #category : #'ffi-calls' }
@@ -122,11 +114,6 @@ WebView >> ffiReturnSeq: aStringSeq status: anInteger result: aStringResult [
 { #category : #'ffi-calls' }
 WebView >> ffiRun [
 	^ self ffiCall: #( void webview_run(WebView *self) )
-]
-
-{ #category : #'ffi-calls' }
-WebView >> ffiRunIteration [ 
-	^ self ffiCall: #( void webview_run_iteration(WebView *self) )
 ]
 
 { #category : #'ffi-calls' }
@@ -161,36 +148,34 @@ WebView >> injectJS: aString [
 "// Injects JavaScript code at the initialization of the new page. Every time
 // the webview will open a the new page - this initialization code will be
 // executed. It is guaranteed that code is executed before window.onload."
+	self ensureOpen.
 	self ffiInit: aString.
 ]
 
+{ #category : #'instance creation' }
+WebView >> open [
+	self isNull 
+		ifTrue: [ ^ self ffiCreate ]
+		ifFalse: [ ^ self ] 
+]
+
 { #category : #registering }
-WebView >> registerCallbackBlock: aBlock nameInJS: aString [
+WebView >> registerCallback: aWebViewCallback [
 "// Binds a native C callback so that it will appear under the given name as a
 // global JavaScript function. Internally it uses webview_init(). Callback
 // receives a request string and a user-provided argument pointer. Request
 // string is a JSON array of all the arguments passed to the JavaScript
 // function."
-	webViewCallback := self 
-		newCallbackWithSignature: #(void (String seq, String req, void * arg)) 
-		block: [ :seq :req :arg | 
-				aBlock value: (NeoJSONObject fromString: req)].
-
-	^ self ffiCallback: webViewCallback
-	  	name: aString
-	  	arguments: ExternalAddress new.
-]
-
-{ #category : #window }
-WebView >> run [
-	Smalltalk os isLinux ifTrue: [ 
-		gtkProcess := [ self ffiRun ] forkAt: Processor lowestPriority named: 'WebView Main Loop'
- 	]
+	self ensureOpen.
+	^ self ffiCallback: aWebViewCallback ffiCallback
+	  name: aWebViewCallback nameInJS
+	  arguments: aWebViewCallback arguments.
 ]
 
 { #category : #window }
 WebView >> setTitleTo: aString [
 "// Updates the title of the native window."
+	self ensureOpen.
 	self ffiTitle: aString
 ]
 
@@ -199,13 +184,8 @@ WebView >> showContent: aString [
 "// Navigates webview to the given URL. URL may be a data URI, i.e.
 // ""data:text/text,<html>...</html>"". It is often ok not to url-encode it
 // properly, webview will re-encode it for you."
+	self ensureOpen.
 	self ffiNavigate: aString.
-]
-
-{ #category : #window }
-WebView >> terminate [
-	Smalltalk os isLinux ifTrue: [ 
-		gtkProcess ifNotNil: [ gtkProcess terminate ]].
 ]
 
 { #category : #window }
@@ -215,6 +195,7 @@ WEBVIEW_HINT_NONE 0  // Width and height are default size
 WEBVIEW_HINT_MIN 1   // Width and height are minimum bounds
 WEBVIEW_HINT_MAX 2   // Width and height are maximum bounds
 WEBVIEW_HINT_FIXED 3 // Window size can not be changed by a user"
+	self ensureOpen.
 	self ffiWidth: anIntegerWidth 
 		height: anIntegerHeight 
 		hits: anIntegerHints.

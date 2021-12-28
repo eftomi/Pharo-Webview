@@ -19,7 +19,7 @@ ManifestWebView class >> ruleEndTrueFalseRuleV1FalsePositive [
 
 { #category : #'code-critics' }
 ManifestWebView class >> ruleLiteralArrayContainsCommaRuleV1FalsePositive [
-	^ #(#(#(#RGMethodDefinition #(#WebViewCallback #initialize #false)) #'2021-12-12T12:14:49.224485+01:00') #(#(#RGMethodDefinition #(#WebViewCallback #initializeWithBlock: #false)) #'2021-12-12T12:24:35.906454+01:00') #(#(#RGMethodDefinition #(#WebViewCallback #initializeWithBlock:nameInJS: #false)) #'2021-12-12T16:15:40.518301+01:00') #(#(#RGMethodDefinition #(#WebView #registerCallbackBlock:nameInJS: #false)) #'2021-12-27T09:15:56.866346+01:00') )
+	^ #(#(#(#RGMethodDefinition #(#WebViewCallback #initialize #false)) #'2021-12-12T12:14:49.224485+01:00') #(#(#RGMethodDefinition #(#WebViewCallback #initializeWithBlock: #false)) #'2021-12-12T12:24:35.906454+01:00') #(#(#RGMethodDefinition #(#WebViewCallback #initializeWithBlock:nameInJS: #false)) #'2021-12-12T16:15:40.518301+01:00') )
 ]
 
 { #category : #'code-critics' }

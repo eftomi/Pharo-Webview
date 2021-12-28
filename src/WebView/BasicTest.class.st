@@ -6,8 +6,12 @@ Class {
 
 { #category : #tests }
 BasicTest >> testCallback [
-	| html wv |
-
+	| cb3 html wv |
+	cb3 := MyCallback3 uniqueInstance 
+		initializeWithBlock: [ :args | 
+			args inspect ] 
+		nameInJS: 'myFunc'.
+	
 	html := 'data:text/html, 
 	<!doctype html>
 	<html>
@@ -22,18 +26,19 @@ BasicTest >> testCallback [
 		</body>
 	</html>'.
 
-	wv := WebView uniqueInstance .
+	wv := WebView new open 
+		registerCallback: cb3.
+	
 	wv showContent: html.
-	wv registerCallbackBlock: 
-		[ :args | args inspect ]
-		nameInJS: 'myFunc'.
-	wv run.
-
 ]
 
 { #category : #tests }
 BasicTest >> testEvalJSWithCallback [
-	| html wv |
+	| cb1 html wv |
+	cb1 := MyCallback1 uniqueInstance 
+		initializeWithBlock: [ :args | 
+			Transcript crShow: args ] 
+		nameInJS: 'firstFunc'.
 	
 	html := 'data:text/html, 
 	<!doctype html>
@@ -46,32 +51,19 @@ BasicTest >> testEvalJSWithCallback [
 		</body>
 	</html>'.
 
-	wv := WebView new.
+	wv := WebView new open 
+		registerCallback: cb1.
+	
 	wv showContent: html.
-	wv registerCallbackBlock: 
-		[ :args | args inspect ]
-		nameInJS: 'evalJSFunc'.
-	wv ffiRun.
-
 	2 seconds wait.
-
-	wv evalJS: 'evalJSFunc(''Hey, do you see me?'')'.
-
-]
-
-{ #category : #tests }
-BasicTest >> testShowContent [
-	| wv |
-	wv := MyWebView uniqueInstance .
-	wv showContent: 'https://www.pharo.org/'.
-	wv run.
+	wv evalJS: 'firstFunc(''Hey, do you see me?'')'.
 
 ]
 
 { #category : #tests }
 BasicTest >> testTwoCallbacks [
 	| cb1 cb2 html wv |
-"	cb1 := MyCallback1 uniqueInstance 
+	cb1 := MyCallback1 uniqueInstance 
 		initializeWithBlock: [ :args | 
 			Transcript crShow: args ] 
 		nameInJS: 'firstFunc'.
@@ -79,7 +71,7 @@ BasicTest >> testTwoCallbacks [
 		initializeWithBlock: [ :args | 
 			Transcript crShow: args ] 
 		nameInJS: 'secondFunc'.
-"	
+	
 	html := 'data:text/html, 
 	<!doctype html>
 	<html>
