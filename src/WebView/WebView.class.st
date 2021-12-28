@@ -38,9 +38,11 @@ Class {
 }
 
 { #category : #accessing }
-WebView class >> uniqueInstance [
-	uniqueInstance ifNil: [ uniqueInstance := self basicNew ffiCreate ].
-	^ uniqueInstance 
+WebView class >> uniqueInstance [ 
+	uniqueInstance 
+		ifNil: [ uniqueInstance := self new ffiCreate ]
+		ifNotNil: [ uniqueInstance handle isNull ifTrue: [ uniqueInstance := self new ffiCreate ] ].
+	^uniqueInstance
 ]
 
 { #category : #'instance creation' }

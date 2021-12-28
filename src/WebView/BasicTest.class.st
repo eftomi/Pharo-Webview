@@ -22,12 +22,12 @@ BasicTest >> testCallback [
 		</body>
 	</html>'.
 
-	wv := WebView new.
+	wv := WebView uniqueInstance .
 	wv showContent: html.
 	wv registerCallbackBlock: 
 		[ :args | args inspect ]
 		nameInJS: 'myFunc'.
-	wv ffiRun.
+	wv run.
 
 ]
 
@@ -62,7 +62,7 @@ BasicTest >> testEvalJSWithCallback [
 { #category : #tests }
 BasicTest >> testShowContent [
 	| wv |
-	wv := TestWebView uniqueInstance .
+	wv := MyWebView uniqueInstance .
 	wv showContent: 'https://www.pharo.org/'.
 	wv run.
 
