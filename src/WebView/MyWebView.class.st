@@ -1,5 +1,5 @@
 Class {
-	#name : #TestWebView,
+	#name : #MyWebView,
 	#superclass : #WebView,
 	#category : #'WebView-Tests'
 }
