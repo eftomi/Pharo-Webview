@@ -9,6 +9,7 @@ Class {
 
 { #category : #'accessing - platform' }
 WebViewLibrary >> macModuleName [
+"	^'/Users/eftomi/Documents/Pharo/vms/90-x64/Pharo.app/Contents/MacOS/Plugins/libwebview.dylib'"
 	^'libwebview.dylib'
 ]
 
