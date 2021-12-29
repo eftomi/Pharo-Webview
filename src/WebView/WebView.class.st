@@ -105,7 +105,7 @@ WebView >> ffiInit: aString [
 WebView >> ffiLibrary [
 	Smalltalk os isWindows ifTrue: [ ^ WebViewLibrary uniqueInstance ].
 	Smalltalk os isLinux ifTrue: [ ^ WebViewLibraryUsingWorker uniqueInstance ].
-	Smalltalk os isMacOSX ifTrue: [ ^ WebViewLibraryUsingWorker uniqueInstance ].
+	Smalltalk os isMacOSX ifTrue: [ ^ WebViewLibrary uniqueInstance ].
 "	^ WebViewLibraryUsingWorker uniqueInstance."
 ]
 
@@ -186,7 +186,10 @@ WebView >> registerCallbackBlock: aBlock nameInJS: aString [
 WebView >> run [
 	Smalltalk os isLinux ifTrue: [ 
 		gtkProcess := [ self ffiRun ] forkAt: Processor lowestPriority named: 'WebView Main Loop'
- 	]
+ 	].
+	Smalltalk os isMacOSX ifTrue: [ 
+		gtkProcess := [ self ffiRun ] forkAt: Processor lowestPriority named: 'WebView Main Loop'
+ 	].
 ]
 
 { #category : #window }
