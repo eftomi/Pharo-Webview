@@ -37,7 +37,7 @@ Class {
 	#category : #'WebView-Core'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 WebView class >> clearUniqueInstance [
 	uniqueInstance := nil.
 	webViewCallbacks := nil.
@@ -45,6 +45,12 @@ WebView class >> clearUniqueInstance [
 
 { #category : #accessing }
 WebView class >> uniqueInstance [ 
+"check also if a window is closed/destroyed, use:
+- windows: self ffiOSWindowsIsWindowVisible: self ffiGetWindow
+- linux:
+- macos:
+If it is closed/destroyed, create new uniqueInstance"
+
 	uniqueInstance 
 		ifNil: [ uniqueInstance := self new ffiCreate ]
 		ifNotNil: [ uniqueInstance handle isNull ifTrue: [ uniqueInstance := self new ffiCreate ] ].
