@@ -48,7 +48,7 @@ WebView class >> uniqueInstance [
 { #category : #'instance creation' }
 WebView >> destroy [
 	Smalltalk os isWindows "hack, ffiDestroy doesn't work on Windows and Linux"
-		ifTrue: [ ^ self ffiDestroyWindow: (self ffiGetWindow pinInMemory) ] 
+		ifTrue: [ ^ self ffiOSWindowsDestroyWindow: (self ffiGetWindow pinInMemory) ] 
 		ifFalse: [ ^ self ffiDestroy ].
 ]
 
@@ -74,11 +74,6 @@ WebView >> ffiCreate [
 { #category : #'ffi-calls' }
 WebView >> ffiDestroy [
 	^ self ffiCall: #( void webview_destroy(WebView *self) )
-]
-
-{ #category : #'ffi-calls' }
-WebView >> ffiDestroyWindow: hWnd [
-	^self ffiCall: #(int DestroyWindow(ExternalAddress hWnd))  library: WinUser32.
 ]
 
 { #category : #'ffi-calls' }
@@ -112,6 +107,16 @@ WebView >> ffiLibrary [
 { #category : #'ffi-calls' }
 WebView >> ffiNavigate: aString [
 	^ self ffiCall: #(void webview_navigate(WebView *self, const char *aString))
+]
+
+{ #category : #'ffi-calls' }
+WebView >> ffiOSWindowsDestroyWindow: hWnd [
+	^self ffiCall: #(int DestroyWindow(ExternalAddress hWnd))  library: WinUser32.
+]
+
+{ #category : #'ffi-calls' }
+WebView >> ffiOSWindowsIsWindowVisible: hWnd [
+	^self ffiCall: #(bool IsWindowVisible(ExternalAddress hWnd))  library: WinUser32.
 ]
 
 { #category : #'ffi-calls' }
