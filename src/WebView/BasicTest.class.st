@@ -22,7 +22,7 @@ BasicTest >> testCallback [
 		</body>
 	</html>'.
 
-	wv := WebView uniqueInstance .
+	wv := MyWebView uniqueInstance .
 	wv showContent: html.
 	wv registerCallbackBlock: 
 		[ :args | args inspect ]
@@ -70,16 +70,8 @@ BasicTest >> testShowContent [
 
 { #category : #tests }
 BasicTest >> testTwoCallbacks [
-	| cb1 cb2 html wv |
-"	cb1 := MyCallback1 uniqueInstance 
-		initializeWithBlock: [ :args | 
-			Transcript crShow: args ] 
-		nameInJS: 'firstFunc'.
-	cb2 := MyCallback2 uniqueInstance 
-		initializeWithBlock: [ :args | 
-			Transcript crShow: args ] 
-		nameInJS: 'secondFunc'.
-"	
+	| html wv |
+
 	html := 'data:text/html, 
 	<!doctype html>
 	<html>
@@ -94,10 +86,19 @@ BasicTest >> testTwoCallbacks [
 				">Doit</button>
 		</body>
 	</html>'.
+	
+	wv := MyWebView uniqueInstance .
+	wv showContent: html.
 
-	wv := WebView new open 
-		registerCallback: cb1; 
-		registerCallback: cb2.
+	wv registerCallbackBlock: 
+		[ :args | args traceCr ]
+		nameInJS: 'firstFunc'.
+
+	wv registerCallbackBlock: 
+		[ :args | args traceCr ]
+		nameInJS: 'secondFunc'.
 	
 	wv showContent: html.
+	wv run.
+
 ]

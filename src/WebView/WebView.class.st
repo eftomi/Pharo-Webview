@@ -25,17 +25,23 @@ Class {
 		'gtkProcess'
 	],
 	#classVars : [
-		'GtkProc',
 		'WEBVIEW_HINT_FIXED',
 		'WEBVIEW_HINT_MAX',
 		'WEBVIEW_HINT_MIN',
 		'WEBVIEW_HINT_NONE'
 	],
 	#classInstVars : [
-		'uniqueInstance'
+		'uniqueInstance',
+		'webViewCallbacks'
 	],
 	#category : #'WebView-Core'
 }
+
+{ #category : #'as yet unclassified' }
+WebView class >> clearUniqueInstance [
+	uniqueInstance := nil.
+	webViewCallbacks := nil.
+]
 
 { #category : #accessing }
 WebView class >> uniqueInstance [ 
@@ -43,6 +49,12 @@ WebView class >> uniqueInstance [
 		ifNil: [ uniqueInstance := self new ffiCreate ]
 		ifNotNil: [ uniqueInstance handle isNull ifTrue: [ uniqueInstance := self new ffiCreate ] ].
 	^uniqueInstance
+]
+
+{ #category : #accessing }
+WebView class >> webViewCallbacks [
+	webViewCallbacks ifNil: [ webViewCallbacks := Dictionary new ].
+	^ webViewCallbacks
 ]
 
 { #category : #'instance creation' }
@@ -177,12 +189,15 @@ WebView >> registerCallbackBlock: aBlock nameInJS: aString [
 // receives a request string and a user-provided argument pointer. Request
 // string is a JSON array of all the arguments passed to the JavaScript
 // function."
-	webViewCallback := self 
+	| aWebViewCallback |
+	aWebViewCallback := self 
 		newCallbackWithSignature: #(void (String seq, String req, void * arg)) 
 		block: [ :seq :req :arg | 
 				aBlock value: (NeoJSONObject fromString: req)].
 
-	^ self ffiCallback: webViewCallback
+	self class webViewCallbacks at: aString put: aWebViewCallback.
+
+	^ self ffiCallback: aWebViewCallback
 	  	name: aString
 	  	arguments: ExternalAddress new.
 ]
