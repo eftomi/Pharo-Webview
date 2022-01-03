@@ -1,21 +1,37 @@
 "
 I represent a multiplatform WebView window which displays and runs html, css, and js content, just like a web browser, however without any other typical browser elements (back button, tabs etc.) I'm being controlled by the operating system directly, Pharo controls me indirectly.
 
-I'm standalone. If you wish to expose a block of code in Pharo to be accessible from javascript code in webview as a function (like for instance onclick=""callPharo(args)""), subclass WebViewCallback, make a uniqueInstance and set the block and its name in js (see comment in WebViewCallback).
+Typically I should be subclassed as in
+
+WebView subclass: #MyWebView 
+...
+
+and created as a singleton using MyWebView class>>#uniqueInstance. If you wish to expose a block of code in Pharo to be accessible from javascript code in webview as a function (like for instance onclick=""callPharo(args)""), use MyWebView>>#registerCallbackBlock:nameInJS:.
 
 Public API and Key Messages
 
-- open - ""WebView new open"" opens a new window; create new WebView for each of the windows/browsers that you need to be displayed  
-- close - closes the window 
-- setTitleTo: aString - sets window title
 - showContent: aString - if aString is valid URL I display its content. aString could also be a html or other document; in this case use proper content types at the beginning, for html this is for instance 'data:text/html, <!doctype html><html><head>...'
 - width: height: hints: - sets the dimensions and my window type; see the method body for hints constants
+- setTitleTo: aString - sets window title
 - evalJS: and injectJS: - see the methods' body for description
-- registerCallback: registers a WebViewCallback subclass
+- registerCallbackBlock:nameInJS: registers a webwiew callback that can be called from javascript running in the webview, exposed as nameInJS function
 
-I'm actually implemented by a DLL library (https://github.com/webview/webview). Besides this DLL, I also need webview implementation for the specific platform. Please look at the above GitHub address for specifics about deployment & installation on end user machine.
+I'm actually implemented by a DLL library (https://github.com/webview/webview) on MS Windows and as a shared objects library on Linux. Besides this, I also need webview implementation for the specific platform - Edge or Edge/Chrome on MS Windows and Gtk3 + Gtk-webkit2 on Linux. Please look at the above GitHub address for specifics about deployment & installation on end user machine.
 
-(I'm actually a FFIOpaqueObject, hiding the FFI calls to webview.dll)
+Due to synchronization incompleteness of this wrapper and library and to avoid memory leaks the WebView ""session"" is typically done like
+
+wv := MyWebView uniqueInstance.							""create unuqueInstance""
+wv showContent: 'https://www.pharo.org/'.				""show some content""
+wv run.															""important for Linux implementation, on MS Windows it has no visible effect""
+wv showContent: 'https://www.pharo.org/'.				""show some other content""
+...
+
+<close webview window manually>
+
+wv terminate.													""terminate run process""
+MyWebView clearUniqueInstance.								""to make sure that non-existing webview (as external object) can be called""
+
+(I'm actually a FFIOpaqueObject, hiding the FFI calls to webview.dll or webview.so)
 "
 Class {
 	#name : #WebView,
@@ -64,8 +80,8 @@ WebView class >> webViewCallbacks [
 
 { #category : #'instance creation' }
 WebView >> destroy [
-	Smalltalk os isWindows "hack, ffiDestroy doesn't work on Windows and Linux"
-		ifTrue: [ ^ self ffiOSWindowsDestroyWindow: (self ffiGetWindow pinInMemory) ] 
+	Smalltalk os isWindows "hack on MS Windows, ffiDestroy doesn't work on Windows and Linux"
+		ifTrue: [ ^ self ffiOSWindowsDestroyWindow: self ffiGetWindow ] 
 		ifFalse: [ ^ self ffiDestroy ].
 ]
 
@@ -117,8 +133,8 @@ WebView >> ffiInit: aString [
 WebView >> ffiLibrary [
 	Smalltalk os isWindows ifTrue: [ ^ WebViewLibrary uniqueInstance ].
 	Smalltalk os isLinux ifTrue: [ ^ WebViewLibraryUsingWorker uniqueInstance ].
-	Smalltalk os isMacOSX ifTrue: [ ^ WebViewLibrary uniqueInstance ].
-"	^ WebViewLibraryUsingWorker uniqueInstance."
+	Smalltalk os isMacOSX ifTrue: [ ^ WebViewLibraryUsingMainThreadRunner uniqueInstance ].
+
 ]
 
 { #category : #'ffi-calls' }
