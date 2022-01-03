@@ -14,7 +14,7 @@ WebViewLibrary >> macModuleName [
 
 { #category : #'accessing - platform' }
 WebViewLibrary >> unixModuleName [
-	^'libwebview.so.1'
+	^'libwebview.so'
 ]
 
 { #category : #'accessing - platform' }
