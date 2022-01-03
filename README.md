@@ -40,14 +40,14 @@ However, you can find webview.so (Linux/Ubuntu) and webview.dylib (MacOS) librar
 Due to synchronization incompleteness of this wrapper and library and to avoid memory leaks the WebView "session" is typically done like
 
 ```
-wv := MyWebView uniqueInstance.							"create unuqueInstance"
-wv showContent: 'https://www.pharo.org/'.				"show some content"
-wv run.															"important for Linux implementation, on MS Windows it has no visible effect"
-wv showContent: 'https://www.pharo.org/'.				"show some other content"
+wv := MyWebView uniqueInstance.	  "create unuqueInstance"
+wv showContent: 'https://www.pharo.org/'.	  "show some content"
+wv run.	  "important for Linux implementation, on MS Windows it has no visible effect"
+wv showContent: 'https://www.pharo.org/'.	  "show some other content"
 ...
 
 <close webview window manually>
 
-wv terminate.													"terminate run process"
-MyWebView clearUniqueInstance.								"to make sure that non-existing webview (as external object) can be called"
+wv terminate.	  "terminate run process"
+MyWebView clearUniqueInstance.  "to make sure that non-existing webview (as external object) can be called"
 ```
