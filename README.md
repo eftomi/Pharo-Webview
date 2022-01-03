@@ -39,9 +39,9 @@ However, you can find webview.so (Linux/Ubuntu) and webview.dylib (MacOS) librar
 
 ```c++ webview.cc -fPIC -shared -o libwebview.so `pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0` ``` (on Linux)
 
-```c++ -dynamiclib webview.cc -std=c++11 -framework WebKit -o libwebview.dylib ``` (on MacOS)
+```c++ -dynamiclib webview.cc -std=c++11 -framework WebKit -o libwebview.dylib ``` (on MacOS, purely experimental)
 
-Due to synchronization incompleteness of this wrapper and library and to avoid memory leaks the WebView "session" is typically done like
+Due to synchronization incompleteness of this wrapper and library and to avoid memory leaks the WebView, the "session" is typically done like
 
 ```
 wv := MyWebView uniqueInstance.	  "create unuqueInstance"
