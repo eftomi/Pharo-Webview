@@ -33,9 +33,13 @@ Public API and Key Messages
 - evalJS: and injectJS: - see the methods' body for description
 - registerCallbackBlock:nameInJS: registers a webwiew callback that can be called from javascript running in the webview, exposed as nameInJS function.
 
-WebView is actually a FFIOpaqueObject implemented by a DLL library (https://github.com/webview/webview) on MS Windows and as a so (shared objects) library on Linux. Besides this, it also need webview implementation for the specific platform - Edge or Edge/Chrome on MS Windows and Gtk3 + Gtk-webkit2 on Linux. Please look at the above GitHub address for specifics about deployment & installation on end user machine. 
+WebView is actually a FFIOpaqueObject implemented by a DLL library (https://github.com/webview/webview) on MS Windows and as a SO (shared objects) library on Linux. Besides this, it also needs webview implementation for the specific platform - Edge or Edge/Chrome on MS Windows and Gtk3 + Gtk-webkit2 on Linux. Please look at the above GitHub address for specifics about deployment & installation on end user machine. 
 
-However, you can find webview.so (Linux/Ubuntu) and webview.dylib (MacOS) libraries in libs directory in this repository. webview.dll (MS Windows) is available at https://github.com/webview/webview.
+However, you can find webview.so (Linux/Ubuntu) and webview.dylib (MacOS) libraries in libs directory in this repository. These two libraries were compiled by gcc as:
+
+```c++ webview.cc -fPIC -shared -o libwebview.so `pkg-config --cflags --libs gtk+-3.0 webkit2gtk-4.0` ``` (on Linux)
+
+```c++ -dynamiclib webview.cc -std=c++11 -framework WebKit -o libwebview.dylib ``` (on MacOS)
 
 Due to synchronization incompleteness of this wrapper and library and to avoid memory leaks the WebView "session" is typically done like
 
