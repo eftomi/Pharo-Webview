@@ -4,15 +4,6 @@ Class {
 	#category : #'WebView-Libraries'
 }
 
-{ #category : #accessing }
-WebViewLibraryUsingWorker class >> calloutAPIClass [
-	^ TFCalloutAPI
-]
-
-{ #category : #accessing }
-WebViewLibraryUsingWorker class >> runner [
-	^ TFWorker default
-]
 
 { #category : #accessing }
 WebViewLibraryUsingWorker >> calloutAPIClass [
