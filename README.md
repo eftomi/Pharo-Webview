@@ -18,8 +18,10 @@ Metacello new
 
 Typically a WebView object should be subclassed as in
 
+```
 WebView subclass: #MyWebView 
 ...
+```
 
 and created as a singleton using MyWebView class>>#uniqueInstance. If you wish to expose a block of code in Pharo to be accessible from javascript code in webview as a function (like for instance onclick="callPharo(args)"), use MyWebView>>#registerCallbackBlock:nameInJS:.
 
@@ -33,10 +35,11 @@ Public API and Key Messages
 
 WebView is actually a FFIOpaqueObject implemented by a DLL library (https://github.com/webview/webview) on MS Windows and as a so (shared objects) library on Linux. Besides this, it also need webview implementation for the specific platform - Edge or Edge/Chrome on MS Windows and Gtk3 + Gtk-webkit2 on Linux. Please look at the above GitHub address for specifics about deployment & installation on end user machine. 
 
-However, you can find webview.dll (MS Windows), webview.so (Linux/Ubuntu), and webview.dylib (MacOS) libraries in libs directory in this repository. 
+However, you can find webview.so (Linux/Ubuntu) and webview.dylib (MacOS) libraries in libs directory in this repository. webview.dll (MS Windows) is available at https://github.com/webview/webview.
 
 Due to synchronization incompleteness of this wrapper and library and to avoid memory leaks the WebView "session" is typically done like
 
+```
 wv := MyWebView uniqueInstance.							"create unuqueInstance"
 wv showContent: 'https://www.pharo.org/'.				"show some content"
 wv run.															"important for Linux implementation, on MS Windows it has no visible effect"
@@ -47,3 +50,4 @@ wv showContent: 'https://www.pharo.org/'.				"show some other content"
 
 wv terminate.													"terminate run process"
 MyWebView clearUniqueInstance.								"to make sure that non-existing webview (as external object) can be called"
+```
