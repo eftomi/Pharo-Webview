@@ -47,7 +47,7 @@ Due to synchronization incompleteness of this wrapper and library and to avoid m
 wv := MyWebView uniqueInstance.	  "create unuqueInstance"
 wv showContent: 'https://www.pharo.org/'.	  "show some content"
 wv run.	  "important for Linux implementation, on MS Windows it has no visible effect"
-wv showContent: 'https://www.pharo.org/'.	  "show some other content"
+wv showContent: 'https://pharo.org/community'.	  "show some other content"
 ...
 
 <close webview window manually>
