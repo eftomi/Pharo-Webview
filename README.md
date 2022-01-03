@@ -53,5 +53,5 @@ wv showContent: 'https://pharo.org/community'.	  "show some other content"
 <close webview window manually>
 
 wv terminate.	  "terminate run process"
-MyWebView clearUniqueInstance.  "to make sure that non-existing webview (as external object) can be called"
+MyWebView clearUniqueInstance.  "to make sure that non-existing webview (as external object) cannot be called"
 ```
