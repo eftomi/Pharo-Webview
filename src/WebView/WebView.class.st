@@ -21,7 +21,6 @@ Class {
 	#name : #WebView,
 	#superclass : #FFIOpaqueObject,
 	#instVars : [
-		'webViewCallback',
 		'gtkProcess'
 	],
 	#classVars : [
@@ -213,9 +212,7 @@ WebView >> run [
 	Smalltalk os isLinux ifTrue: [ 
 		gtkProcess := [ self ffiRun ] forkAt: Processor lowestPriority named: 'WebView Main Loop'
  	].
-	Smalltalk os isMacOSX ifTrue: [ 
-		gtkProcess := [ self ffiRun ] forkAt: Processor lowestPriority named: 'WebView Main Loop'
- 	].
+
 ]
 
 { #category : #window }
