@@ -1,5 +1,5 @@
 "
-I'm a FFILibrary which should point to webview.dll stored locally as other uFFI libraries. Look also https://github.com/webview/webview for the installation & deploy.
+I'm a FFILibrary which should point to webview.dll and webview.so stored locally as other uFFI libraries. Look also https://github.com/webview/webview for the installation & deploy.
 "
 Class {
 	#name : #WebViewLibrary,

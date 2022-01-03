@@ -6,12 +6,8 @@ Class {
 
 { #category : #tests }
 BasicTest >> testCallback [
-	| cb3 html wv |
-	cb3 := MyCallback3 uniqueInstance 
-		initializeWithBlock: [ :args | 
-			args inspect ] 
-		nameInJS: 'myFunc'.
-	
+	| html wv |
+
 	html := 'data:text/html, 
 	<!doctype html>
 	<html>
@@ -26,19 +22,18 @@ BasicTest >> testCallback [
 		</body>
 	</html>'.
 
-	wv := WebView new open 
-		registerCallback: cb3.
-	
+	wv := MyWebView uniqueInstance .
 	wv showContent: html.
+	wv registerCallbackBlock: 
+		[ :args | args inspect ]
+		nameInJS: 'myFunc'.
+	wv run.
+
 ]
 
 { #category : #tests }
 BasicTest >> testEvalJSWithCallback [
-	| cb1 html wv |
-	cb1 := MyCallback1 uniqueInstance 
-		initializeWithBlock: [ :args | 
-			Transcript crShow: args ] 
-		nameInJS: 'firstFunc'.
+	| html wv |
 	
 	html := 'data:text/html, 
 	<!doctype html>
@@ -51,27 +46,32 @@ BasicTest >> testEvalJSWithCallback [
 		</body>
 	</html>'.
 
-	wv := WebView new open 
-		registerCallback: cb1.
-	
+	wv := WebView new.
 	wv showContent: html.
+	wv registerCallbackBlock: 
+		[ :args | args inspect ]
+		nameInJS: 'evalJSFunc'.
+	wv ffiRun.
+
 	2 seconds wait.
-	wv evalJS: 'firstFunc(''Hey, do you see me?'')'.
+
+	wv evalJS: 'evalJSFunc(''Hey, do you see me?'')'.
+
+]
+
+{ #category : #tests }
+BasicTest >> testShowContent [
+	| wv |
+	wv := MyWebView uniqueInstance .
+	wv showContent: 'https://www.pharo.org/'.
+	wv run.
 
 ]
 
 { #category : #tests }
 BasicTest >> testTwoCallbacks [
-	| cb1 cb2 html wv |
-	cb1 := MyCallback1 uniqueInstance 
-		initializeWithBlock: [ :args | 
-			Transcript crShow: args ] 
-		nameInJS: 'firstFunc'.
-	cb2 := MyCallback2 uniqueInstance 
-		initializeWithBlock: [ :args | 
-			Transcript crShow: args ] 
-		nameInJS: 'secondFunc'.
-	
+	| html wv |
+
 	html := 'data:text/html, 
 	<!doctype html>
 	<html>
@@ -86,10 +86,19 @@ BasicTest >> testTwoCallbacks [
 				">Doit</button>
 		</body>
 	</html>'.
+	
+	wv := MyWebView uniqueInstance .
+	wv showContent: html.
 
-	wv := WebView new open 
-		registerCallback: cb1; 
-		registerCallback: cb2.
+	wv registerCallbackBlock: 
+		[ :args | args traceCr ]
+		nameInJS: 'firstFunc'.
+
+	wv registerCallbackBlock: 
+		[ :args | args traceCr ]
+		nameInJS: 'secondFunc'.
 	
 	wv showContent: html.
+	wv run.
+
 ]
