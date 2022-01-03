@@ -2,7 +2,7 @@
 
 Pharo-WebView is a package which implements a binding to webview dll library available at https://github.com/webview/webview in Pharo. Webview allows you to show HTML user interfaces in a native window, inject JavaScript code and HTML content into the page. It can render HTML originating via web requests or as a direct input.
 
-IMPORTANT: Pharo-WebView was until now tested only on Windows 64-bit. Other platforms (Mac, Linux) should follow. API could change.
+IMPORTANT: Pharo-WebView was until now tested on Windows 10 64-bit and Linux (Ubuntu Desktop 20.04.3 LTS) 64-bit. Due to some open issues (like, for instance, https://github.com/webview/webview/issues/588), the need to redefine some of the library's functionalities to properly manage (create, destroy) external objects, and MacOS/Cocoa specific implementation in this library I decided to continue the work with stable libraries, like for instance https://www.tryphotino.io/.
 
 ## Installation
 You can load WebView package using Metacello:
@@ -16,15 +16,34 @@ Metacello new
 
 ## Use
 
-Public API and Key Messages:
-- `open` - `WebView new open` opens a new window; create new WebView for each of the windows/browsers that you need to be displayed  
-- `close` - closes the native window 
-- `setTitleTo: aString` - sets window title
-- `showContent: aString` - if aString is valid URL webview renders its content. aString could also be a html or other document; in this case use proper content types at the beginning, for html this is for instance `'data:text/html, <!doctype html><html><head>...'`
-- `width: height: hints:` - sets the dimensions and native window type; see the method body for hints constants
-- `evalJS:` and `injectJS:` - see the methods' body for description
-- `registerCallback:` registers a WebViewCallback subclass
+Typically a WebView object should be subclassed as in
 
-Besides the DLL mentioned above, this package also needs webview implementation for the specific platform. Please look at the above GitHub address for specifics about deployment & installation on end user machine. For MS Windows, place 32 or 64 bit versions of webview.dll and WebView2Loader.dll from https://github.com/webview/webview/tree/master/dll/ into the Pharo VM folder.
+WebView subclass: #MyWebView 
+...
 
-If you wish to expose a block of code in Pharo to be accessible from JavaScript code in webview as a function (like for instance `onclick="callPharo(args)"`), subclass WebViewCallback, make a uniqueInstance and set the block and its name in JavaScript (see comment in WebViewCallback class).
+and created as a singleton using MyWebView class>>#uniqueInstance. If you wish to expose a block of code in Pharo to be accessible from javascript code in webview as a function (like for instance onclick="callPharo(args)"), use MyWebView>>#registerCallbackBlock:nameInJS:.
+
+Public API and Key Messages
+
+- showContent: aString - if aString is valid URL, webview displays its content. aString could also be a html or other document; in this case use proper content types at the beginning, for html this is for instance 'data:text/html, <!doctype html><html><head>...'
+- width: height: hints: - sets the dimensions and the window type; see the method body for hints constants
+- setTitleTo: aString - sets window title
+- evalJS: and injectJS: - see the methods' body for description
+- registerCallbackBlock:nameInJS: registers a webwiew callback that can be called from javascript running in the webview, exposed as nameInJS function.
+
+WebView is actually a FFIOpaqueObject implemented by a DLL library (https://github.com/webview/webview) on MS Windows and as a so (shared objects) library on Linux. Besides this, it also need webview implementation for the specific platform - Edge or Edge/Chrome on MS Windows and Gtk3 + Gtk-webkit2 on Linux. Please look at the above GitHub address for specifics about deployment & installation on end user machine. 
+
+However, you can find webview.dll (MS Windows), webview.so (Linux/Ubuntu), and webview.dylib (MacOS) libraries in libs directory in this repository. 
+
+Due to synchronization incompleteness of this wrapper and library and to avoid memory leaks the WebView "session" is typically done like
+
+wv := MyWebView uniqueInstance.							"create unuqueInstance"
+wv showContent: 'https://www.pharo.org/'.				"show some content"
+wv run.															"important for Linux implementation, on MS Windows it has no visible effect"
+wv showContent: 'https://www.pharo.org/'.				"show some other content"
+...
+
+<close webview window manually>
+
+wv terminate.													"terminate run process"
+MyWebView clearUniqueInstance.								"to make sure that non-existing webview (as external object) can be called"
