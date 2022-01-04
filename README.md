@@ -2,7 +2,7 @@
 
 Pharo-WebView is a package which implements a binding to webview dll library available at https://github.com/webview/webview in Pharo. Webview allows you to show HTML user interfaces in a native window, inject JavaScript code and HTML content into the page. It can render HTML originating via web requests or as a direct input.
 
-IMPORTANT: Pharo-WebView was until now tested on Windows 10 64-bit and Linux (Ubuntu Desktop 20.04.3 LTS) 64-bit. Due to some open issues (like, for instance, https://github.com/webview/webview/issues/588), the need to redefine some of the library's functionalities to properly manage (create, destroy) external objects when controlling WebView interactively from Pharo, and MacOS/Cocoa specific implementation in this library I decided to continue the work with similarly lightweight and stable libraries, like for instance https://www.tryphotino.io/.
+IMPORTANT: Pharo-WebView was until now tested on Windows 10 64-bit and Linux (Ubuntu Desktop 20.04.3 LTS) 64-bit. On Linux, Pharo-WebView must be run on headless VM, webview library is available as libs/webview.so file in this repository. Due to some open issues (like, for instance, https://github.com/webview/webview/issues/588), the need to redefine some of the library's functionalities to properly manage (create, destroy) external objects when controlling WebView interactively from Pharo, and MacOS/Cocoa specific implementation in this library I decided to continue the work with similarly lightweight and stable libraries, like for instance https://www.tryphotino.io/. Feel free to experiment and create pull requests. There's also a MacOS version of webview library (webview.dylib) available in libs directory.
 
 ## Installation
 You can load WebView package using Metacello:
