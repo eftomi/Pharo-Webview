@@ -8,8 +8,7 @@ Class {
 BasicTest >> testCallback [
 	| html wv |
 
-	html := 'data:text/html, 
-	<!doctype html>
+	html := '	<!doctype html>
 	<html>
 		<head>
 			<title>Test</title>
@@ -22,8 +21,8 @@ BasicTest >> testCallback [
 		</body>
 	</html>'.
 
-	wv := MyWebView uniqueInstance .
-	wv showContent: html.
+	wv := WebView uniqueInstance .
+	wv setHtmlContent: html.
 	wv registerCallbackBlock: 
 		[ :args | args inspect ]
 		nameInJS: 'myFunc'.
@@ -35,8 +34,7 @@ BasicTest >> testCallback [
 BasicTest >> testEvalJSWithCallback [
 	| html wv |
 	
-	html := 'data:text/html, 
-	<!doctype html>
+	html := '	<!doctype html>
 	<html>
 		<head>
 			<title>Test</title>
@@ -46,12 +44,11 @@ BasicTest >> testEvalJSWithCallback [
 		</body>
 	</html>'.
 
-	wv := WebView new.
-	wv showContent: html.
+	wv := WebView uniqueInstance .
+	wv setHtmlContent: html.
 	wv registerCallbackBlock: 
 		[ :args | args inspect ]
 		nameInJS: 'evalJSFunc'.
-	wv ffiRun.
 
 	2 seconds wait.
 
@@ -60,10 +57,11 @@ BasicTest >> testEvalJSWithCallback [
 ]
 
 { #category : #tests }
-BasicTest >> testShowContent [
+BasicTest >> testSetTitle [
 	| wv |
-	wv := MyWebView uniqueInstance .
-	wv showContent: 'https://www.pharo.org/'.
+	wv := WebView uniqueInstance .
+	wv navigateToURL: 'https://www.pharo.org/'.
+	wv setTitleTo: 'Webview in Pharo!'.
 	wv run.
 
 ]
@@ -72,8 +70,7 @@ BasicTest >> testShowContent [
 BasicTest >> testTwoCallbacks [
 	| html wv |
 
-	html := 'data:text/html, 
-	<!doctype html>
+	html := '	<!doctype html>
 	<html>
 		<head>
 			<title>Test</title>
@@ -87,8 +84,8 @@ BasicTest >> testTwoCallbacks [
 		</body>
 	</html>'.
 	
-	wv := MyWebView uniqueInstance .
-	wv showContent: html.
+	wv := WebView uniqueInstance .
+	wv setHtmlContent: html.
 
 	wv registerCallbackBlock: 
 		[ :args | args traceCr ]
@@ -98,7 +95,16 @@ BasicTest >> testTwoCallbacks [
 		[ :args | args traceCr ]
 		nameInJS: 'secondFunc'.
 	
-	wv showContent: html.
+	wv setHtmlContent: html.
 	wv run.
+]
+
+{ #category : #tests }
+BasicTest >> testVisitUrl [
+	| wv |
+	wv := WebView uniqueInstance .
+	wv navigateToURL: 'https://www.pharo.org/'.
+	wv run.
+
 
 ]
