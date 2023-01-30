@@ -157,6 +157,11 @@ WebView >> ffiEventsPending [
 ]
 
 { #category : #'ffi-calls' }
+WebView >> ffiGetLastError [
+	^self ffiCall: #(uint32 GetLastError(void)) module: 'Kernel32.dll'
+]
+
+{ #category : #'ffi-calls' }
 WebView >> ffiGetWindow [
 	^self ffiCall: #( void * webview_get_window(WebView *self) )
 	
@@ -237,6 +242,15 @@ WebView >> ffiRunIteration [
 ]
 
 { #category : #'ffi-calls' }
+WebView >> ffiSetHtmlTo: aString [
+	^ self ffiCall: #(void webview_set_html(WebView *self, const char *aString))
+
+"// Set webview HTML directly.
+// Example: webview_set_html(w, ""<h1>Hello</h1>"");
+WEBVIEW_API void webview_set_html(webview_t w, const char *html);"
+]
+
+{ #category : #'ffi-calls' }
 WebView >> ffiTerminate [
 	^ self ffiCall: #( void webview_terminate(WebView *self) )
 	
@@ -251,6 +265,14 @@ WebView >> ffiTitle: aString [
 	
 "// Updates the title of the native window. Must be called from the UI thread.
 WEBVIEW_API void webview_set_title(webview_t w, const char *title);"
+]
+
+{ #category : #'ffi-calls' }
+WebView >> ffiUnbindCallbackNamed: aString [
+	^ self ffiCall: #(void webview_unbind(WebView * self, const char *aString))
+
+"// Removes a native C callback that was previously set by webview_bind.
+WEBVIEW_API void webview_unbind(webview_t w, const char *name);"
 ]
 
 { #category : #'ffi-calls' }
